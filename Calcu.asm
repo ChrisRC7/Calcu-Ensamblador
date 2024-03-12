@@ -30,8 +30,6 @@ start:
     mov ds,ax
 
 
-
-
 ;---MOSTRAR MENU---
     menu:
         lea dx,msg_Menu
