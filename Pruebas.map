@@ -1,1 +1,1 @@
-Fatal: Bad loc for fixupp in module 'Pruebas.obj' near file offset 5f9
+Fatal: 16 bit segments not supported in module Pruebas.asm
