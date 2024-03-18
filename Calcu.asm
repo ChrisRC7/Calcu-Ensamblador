@@ -17,7 +17,6 @@
     msg_Resultado db 0ah, 10,13,10,13,'El resultado es: $'
     msg_CerrarPrograma db 10,13,10,13,'Cerrando el programa... $'
     
-
 ;---VARIABLES---
     num1 db ?
     num2 db ?
@@ -33,8 +32,6 @@
 start:
     mov ax,@data
     mov ds,ax
-
-
 
 
 ;---MOSTRAR MENU---
