@@ -104,7 +104,10 @@
         add cx, ax
 
         ; Realizar la resta
-        sub bx, cx
+        mov ax, cx
+        mul bx
+        mov bx, ax
+        jmp mostrar_resultado
 
         ; Comprobar si el resultado es negativo
         test bx, bx            ; Comprueba si BX (el resultado) es negativo
@@ -119,7 +122,7 @@ mostrar_resultado:
         mov dx, offset result ; Carga la direcci?n del mensaje del resultado
         mov ah, 09h           ; Servicio DOS para imprimir una cadena
         int 21h               ; Llama al servicio de DOS
-
+        jmp convertir_mostrar
         ; Mostrar el signo "-" si el resultado es negativo
         cmp byte [negativo], 1 ; Comprueba si el resultado es negativo
         jne convertir_mostrar ; Si no es negativo, contin?a con la conversi?n y muestra el resultado

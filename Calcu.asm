@@ -17,6 +17,7 @@
     msg_Resultado db 0ah, 10,13,10,13,'El resultado es: $'
     msg_CerrarPrograma db 10,13,10,13,'Cerrando el programa... $'
     
+
 ;---VARIABLES---
     num1 db ?
     num2 db ?
@@ -32,6 +33,8 @@
 start:
     mov ax,@data
     mov ds,ax
+
+
 
 
 ;---MOSTRAR MENU---
@@ -89,7 +92,56 @@ start:
 
 ;SUMA
     Op_Suma:
+    call obtener_numeros
+
+    add bx, cx
+
+    call mostrar_resultados
+    
+    jmp menu
+    
+;RESTA
+    Op_Resta:
+    mov byte [negativo], 0 ; Establece el indicador de negativo en 1
+    call obtener_numeros
+
+    ; Realizar la resta
+    sub bx, cx
+
+    call mostrar_resultados
+
+    jmp menu
+
+;Multiplicacion
+    Op_Multiplicacion:
+    
+    call obtener_numeros
+    
+    mov ax, cx
+    mul bx
+    mov bx, ax
+    
+    call mostrar_resultados
+
+    jmp menu
+
+
+;Division
+    Op_Division:
+    call obtener_numeros
+    
+    mov ax, bx
+    div cx
+    mov bx, ax
+    
+    call mostrar_resultados
+
+    jmp menu
+    
+obtener_numeros proc near
+
     lea dx, msg_PrimerNumero
+    
     mov ah, 09h
     int 21h
 
@@ -98,7 +150,6 @@ start:
 
     sub al, 30h
     mov ah, 0     ; Limpia AH
-
     mov dx, ax
 
     mov ax, 1000
@@ -110,7 +161,6 @@ start:
 
     sub al, 30h
     mov ah, 0
-
     mov dx, ax
 
     mov ax, 100
@@ -122,7 +172,6 @@ start:
 
     sub al, 30h
     mov ah, 0
-
     mov dx, ax
 
     mov ax, 10
@@ -136,6 +185,7 @@ start:
     mov ah, 0
     add bx, ax
 
+    ; Solicitud del segundo n?mero
     lea dx, msg_SegundoNumero
     mov ah, 09h
     int 21h
@@ -145,7 +195,6 @@ start:
 
     sub al, 30h
     mov ah, 0     ; Limpia AH
-
     mov dx, ax
 
     mov ax, 1000
@@ -157,7 +206,6 @@ start:
 
     sub al, 30h
     mov ah, 0
-
     mov dx, ax
 
     mov ax, 100
@@ -169,7 +217,6 @@ start:
 
     sub al, 30h
     mov ah, 0
-
     mov dx, ax
 
     mov ax, 10
@@ -182,131 +229,14 @@ start:
     sub al, 30h
     mov ah, 0
     add cx, ax
-
-    add bx, cx
-
-    mov dx, offset msg_Resultado    ; Carga la direcci?n del mensaje del resultado
-    mov ah, 09h              ; Servicio DOS para imprimir una cadena
-    int 21h                  ; Llama al servicio de DOS
-
-    mov ax, bx               ; Mueve el valor de BX a AX
-
-    ; Convertir y mostrar el n?mero almacenado en AX (resultado) como una cadena ASCII
-    mov cx, 0                ; Inicializa el contador de d?gitos
-    mov bx, 10               ; Prepara BX para la divisi?n
-
-    convert_loopone:
-        xor dx, dx           ; Limpia DX para la divisi?n
-        div bx               ; Divide AX por 10 y almacena el cociente en AX y el residuo en DX
-        add dl, '0'          ; Convierte el d?gito en ASCII
-        push dx              ; Empuja el d?gito en la pila
-        inc cx               ; Incrementa el contador de d?gitos
-        test ax, ax          ; Verifica si AX es 0 (fin del n?mero)
-        jnz convert_loopone     ; Si no es cero, contin?a el bucle
-
-    display_loopone:
-        pop dx               ; Saca el d?gito de la pila
-        mov ah, 02h          ; Servicio DOS para imprimir un car?cter
-        int 21h              ; Llama al servicio de DOS para imprimir el d?gito
-        dec cx               ; Decrementa el contador de d?gitos
-        jnz display_loopone     ; Repite hasta que todos los d?gitos se impriman       
-    jmp menu
     
-;RESTA
-    Op_Resta:
-    lea dx, msg_PrimerNumero
-        mov ah, 09h
-        int 21h
-        
-        mov ah, 01h
-        int 21h
-        
-        sub al, 30h
-        mov ah, 0     ; Limpia AH
-        mov dx, ax
-        
-        mov ax, 1000
-        mul dx
-        mov bx, ax
-        
-        mov ah, 01h
-        int 21h
-        
-        sub al, 30h
-        mov ah, 0
-        mov dx, ax
-        
-        mov ax, 100
-        mul dx
-        add bx, ax
-        
-        mov ah, 01h
-        int 21h
-        
-        sub al, 30h
-        mov ah, 0
-        mov dx, ax
-        
-        mov ax, 10
-        mul dx
-        add bx, ax
-        
-        mov ah, 01h
-        int 21h
-        
-        sub al, 30h
-        mov ah, 0
-        add bx, ax
+    ret
+obtener_numeros endp
 
-        ; Solicitud del segundo n?mero
-        lea dx, msg_SegundoNumero
-        mov ah, 09h
-        int 21h
-        
-        mov ah, 01h
-        int 21h
-        
-        sub al, 30h
-        mov ah, 0     ; Limpia AH
-        mov dx, ax
-        
-        mov ax, 1000
-        mul dx
-        mov cx, ax
-        
-        mov ah, 01h
-        int 21h
-        
-        sub al, 30h
-        mov ah, 0
-        mov dx, ax
-        
-        mov ax, 100
-        mul dx
-        add cx, ax
-        
-        mov ah, 01h
-        int 21h
-        
-        sub al, 30h
-        mov ah, 0
-        mov dx, ax
-        
-        mov ax, 10
-        mul dx
-        add cx, ax
-        
-        mov ah, 01h
-        int 21h
-        
-        sub al, 30h
-        mov ah, 0
-        add cx, ax
 
-        ; Realizar la resta
-        sub bx, cx
+mostrar_resultados proc near
 
-        ; Comprobar si el resultado es negativo
+; Comprobar si el resultado es negativo
         test bx, bx            ; Comprueba si BX (el resultado) es negativo
         jns mostrar_resultado  ; Si no es negativo, saltar a mostrar el resultado
 
@@ -350,101 +280,10 @@ start:
             int 21h              ; Llama al servicio de DOS para imprimir el d?gito
             dec cx               ; Decrementa el contador de d?gitos
             jnz display_looptwo     ; Repite hasta que todos los d?gitos se impriman
+            
+    ret
     
-    jmp menu
-
-;Multiplicacion
-    Op_Multiplicacion:
-    lea dx, msg_PrimerNumero
-    mov ah,9
-    int 21h
-
-    mov ah,1
-    int 21h
-    sub al,48
-    mov num1,al
-
-    lea dx, msg_SegundoNumero 
-    mov ah,9
-    int 21h
-
-    mov ah,1
-    int 21h
-    sub al,48
-    mov num2,al
-
-    mul num1
-    mov resultado,al
-    aam
-
-    add ah,48
-    add al,48
-
-    mov bx,ax
-
-    lea dx, msg_Resultado 
-    mov ah,9
-    int 21h
-
-    mov ah,2
-    mov dl,bh
-    int 21h
-
-    mov ah,2
-    mov dl,bl
-    int 21h
-
-    jmp menu
-
-
-;Division
-    Op_Division:
-    lea dx,msg_PrimerNumero 
-    mov ah,9
-    int 21h
-
-    mov ah,1
-    int 21h
-    sub al,48
-    mov num1,al
-
-    lea dx,msg_SegundoNumero 
-    mov ah,9
-    int 21h
-
-    mov ah,1
-    int 21h
-    sub al,48
-    mov num2,al
-
-    mov cl,num1
-    mov ax,cx
-
-    div num2
-    mov resultado,al
-    mov ah,00
-    aad
-
-    add ah,48
-    add al,48
-
-    mov bx,ax
-
-    lea dx,msg_Resultado 
-    mov ah,9
-    int 21h
-
-    mov ah,2
-    mov dl,bh
-    int 21h
-
-    mov ah,2
-    mov dl,bl
-    int 21h
-
-    jmp menu
-
-
+mostrar_resultados endp
 
 ;---CIERRA DEL PROGRAMA---
     exit_p:
