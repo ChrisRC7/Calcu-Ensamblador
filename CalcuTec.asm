@@ -5,17 +5,19 @@
     .data
 
 ;---MENSAJES---
-    msg_Menu db 10, 13,'Menu', 10, 13, '$'
-    msg_Suma db '   1. Suma $'
-    msg_Resta db 10,13,'   2. Resta $'
-    msg_Op_Multiplicacion db 10,13,'   3. Multiplicacion $'
-    msg_Op_Division db 10,13,'   4. Division $'
-    msg_Salir db 10,13,'   5. Salir $'
+    msg_Menu db 10, 13,'Bienvenido a CalcuTec, por favor presione: ', 10, 13, '$'
+    msg_Suma db '   1. Para Sumar $'
+    msg_Resta db 10,13,'   2. Para Restar $'
+    msg_Op_Multiplicacion db 10,13,'   3. Para Multiplicar $'
+    msg_Op_Division db 10,13,'   4. Para Dividir $'
+    msg_Salir db 10,13,'   5. Para Salir $'
     msg_Opcion db 10,13,'   Escoge una opcion: $'
     msg_PrimerNumero db 0ah, 0dh, 10,13,10,13,'Ingresa el primer numero: $'
     msg_SegundoNumero db 0ah, 0dh, 10,13,'Ingresa el segundo numero: $'
     msg_Resultado db 0ah, 10,13,10,13,'El resultado es: $'
-    msg_CerrarPrograma db 10,13,10,13,'Cerrando el programa... $'
+    msg_Error db 0ah, "Por favor ingresa numeros del 0 al 9", 0ah, 0dh, "$"
+    msg_Error_Division_Por_Cero db 0ah, "Error! La division por cero no esta definida.", 0ah, 0dh, "$"
+    msg_CerrarPrograma db 10,13,10,13,'Gracias por usar CalcuTec $'
     negativo db 0 ;Indicador de negatico 0 es no negativo, 1 es negativo
 
 
@@ -118,16 +120,26 @@ start:
 
 
 ;Division
-    Op_Division:
-    call obtener_numeros ; Se obtienen los numeros ingresados por el usuario
-    
+Op_Division:
+    call obtener_numeros ; Se obtienen los n?meros ingresados por el usuario
+
+    ; Verificar si el divisor (cx) es cero
+    cmp cx, 0
+    je division_por_cero ; Si cx es cero, saltar a la etiqueta division_por_cero
+
     mov ax, bx
     div cx
     mov bx, ax
-    
-    call mostrar_resultados  ;Se muestra el resultado de la operaci?n
 
+    call mostrar_resultados ; Se muestra el resultado de la operaci?n
     jmp menu
+
+division_por_cero:
+    ; Mostrar mensaje de error por divisi?n por cero
+    lea dx, msg_Error_Division_Por_Cero
+    mov ah, 09h
+    int 21h
+    jmp menu ; Volver al men? principal
     
 obtener_numeros proc
 
@@ -138,6 +150,11 @@ obtener_numeros proc
 
     mov ah, 01h
     int 21h       ;Input del usuario
+    
+    cmp al, '0'   ; Compara con el valor ASCII del d?gito '0'
+    jb error      ; Si es menor que '0', muestra error
+    cmp al, '9'   ; Compara con el valor ASCII del d?gito '9'
+    ja error      ; Si es mayor que '9', muestra error
 
     sub al, 30h
     mov ah, 0     ; Limpia ah para quedarnos solo con el input del usuario
@@ -149,6 +166,11 @@ obtener_numeros proc
 
     mov ah, 01h
     int 21h
+    
+    cmp al, '0'   ; Compara con el valor ASCII del d?gito '0'
+    jb error      ; Si es menor que '0', muestra error
+    cmp al, '9'   ; Compara con el valor ASCII del d?gito '9'
+    ja error      ; Si es mayor que '9', muestra error
 
     sub al, 30h
     mov ah, 0     ; Limpia ah para quedarnos solo con el input del usuario
@@ -160,6 +182,11 @@ obtener_numeros proc
 
     mov ah, 01h
     int 21h
+    
+    cmp al, '0'   ; Compara con el valor ASCII del d?gito '0'
+    jb error      ; Si es menor que '0', muestra error
+    cmp al, '9'   ; Compara con el valor ASCII del d?gito '9'
+    ja error      ; Si es mayor que '9', muestra error
 
     sub al, 30h
     mov ah, 0     ; Limpia ah para quedarnos solo con el input del usuario
@@ -171,6 +198,11 @@ obtener_numeros proc
 
     mov ah, 01h
     int 21h
+    
+    cmp al, '0'   ; Compara con el valor ASCII del d?gito '0'
+    jb error      ; Si es menor que '0', muestra error
+    cmp al, '9'   ; Compara con el valor ASCII del d?gito '9'
+    ja error      ; Si es mayor que '9', muestra error
 
     sub al, 30h  
     mov ah, 0    ; Limpia ah para quedarnos solo con el input del usuario
@@ -183,6 +215,11 @@ obtener_numeros proc
 
     mov ah, 01h
     int 21h
+    
+    cmp al, '0'   ; Compara con el valor ASCII del d?gito '0'
+    jb error      ; Si es menor que '0', muestra error
+    cmp al, '9'   ; Compara con el valor ASCII del d?gito '9'
+    ja error      ; Si es mayor que '9', muestra error
 
     sub al, 30h
     mov ah, 0    ; Limpia ah para quedarnos solo con el input del usuario
@@ -194,6 +231,11 @@ obtener_numeros proc
 
     mov ah, 01h
     int 21h
+    
+    cmp al, '0'   ; Compara con el valor ASCII del d?gito '0'
+    jb error      ; Si es menor que '0', muestra error
+    cmp al, '9'   ; Compara con el valor ASCII del d?gito '9'
+    ja error      ; Si es mayor que '9', muestra error
 
     sub al, 30h
     mov ah, 0    ; Limpia ah para quedarnos solo con el input del usuario
@@ -205,6 +247,11 @@ obtener_numeros proc
 
     mov ah, 01h
     int 21h
+    
+    cmp al, '0'   ; Compara con el valor ASCII del d?gito '0'
+    jb error      ; Si es menor que '0', muestra error
+    cmp al, '9'   ; Compara con el valor ASCII del d?gito '9'
+    ja error      ; Si es mayor que '9', muestra error
 
     sub al, 30h
     mov ah, 0   ; Limpia ah para quedarnos solo con el input del usuario
@@ -216,6 +263,11 @@ obtener_numeros proc
 
     mov ah, 01h
     int 21h
+    
+    cmp al, '0'   ; Compara con el valor ASCII del d?gito '0'
+    jb error      ; Si es menor que '0', muestra error
+    cmp al, '9'   ; Compara con el valor ASCII del d?gito '9'
+    ja error      ; Si es mayor que '9', muestra error
 
     sub al, 30h 
     mov ah, 0   ; Limpia ah para quedarnos solo con el input del usuario
@@ -224,6 +276,15 @@ obtener_numeros proc
     ret
 obtener_numeros endp
 
+error proc
+    ; Mostrar el mensaje de error
+    lea dx, msg_Error
+    mov ah, 09h
+    int 21h
+    ; Volver a solicitar la entrada del usuario
+    jmp menu
+
+error endp
 
 mostrar_resultados proc
 
