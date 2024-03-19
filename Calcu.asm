@@ -16,16 +16,7 @@
     msg_SegundoNumero db 0ah, 0dh, 10,13,'Ingresa el segundo numero: $'
     msg_Resultado db 0ah, 10,13,10,13,'El resultado es: $'
     msg_CerrarPrograma db 10,13,10,13,'Cerrando el programa... $'
-    
-
-;---VARIABLES---
-    num1 db ?
-    num2 db ?
-    resultado db ?
-    primer_numero dw 0      ; Variable para almacenar el primer n?mero ingresado
-    segundo_numero dw 0     ; Variable para almacenar el segundo n?mero ingresado
-    result dw 0
-    negativo db 0 ; Indicador de si el resultado es negativo (0 = no negativo, 1 = negativo)  
+    negativo db 0 ;Indicador de negatico 0 es no negativo, 1 es negativo
 
 
 ;APERTURA DEL PROGRAMA
@@ -74,6 +65,7 @@ start:
 
 
 ;---SWITCH OPCIONES---
+    mov byte [negativo], 0 ; Establece el indicador de negativo en 0 
     cmp bh,1
     je Op_Suma
 
@@ -92,49 +84,48 @@ start:
 
 ;SUMA
     Op_Suma:
-    call obtener_numeros
+    call obtener_numeros  ; Se obtienen los numeros ingresados por el usuario
 
     add bx, cx
 
-    call mostrar_resultados
+    call mostrar_resultados ;Se muestra el resultado de la operaci?n
     
     jmp menu
     
 ;RESTA
     Op_Resta:
-    mov byte [negativo], 0 ; Establece el indicador de negativo en 1
-    call obtener_numeros
+    call obtener_numeros ; Se obtienen los numeros ingresados por el usuario
 
     ; Realizar la resta
     sub bx, cx
 
-    call mostrar_resultados
+    call mostrar_resultados ;Se muestra el resultado de la operaci?n
 
     jmp menu
 
 ;Multiplicacion
     Op_Multiplicacion:
     
-    call obtener_numeros
+    call obtener_numeros  ; Se obtienen los numeros ingresados por el usuario 
     
     mov ax, cx
     mul bx
     mov bx, ax
     
-    call mostrar_resultados
+    call mostrar_resultados ;Se muestra el resultado de la operaci?n
 
     jmp menu
 
 
 ;Division
     Op_Division:
-    call obtener_numeros
+    call obtener_numeros ; Se obtienen los numeros ingresados por el usuario
     
     mov ax, bx
     div cx
     mov bx, ax
     
-    call mostrar_resultados
+    call mostrar_resultados  ;Se muestra el resultado de la operaci?n
 
     jmp menu
     
@@ -142,48 +133,48 @@ obtener_numeros proc near
 
     lea dx, msg_PrimerNumero
     
-    mov ah, 09h
-    int 21h
+    mov ah, 09h 
+    int 21h   
 
     mov ah, 01h
-    int 21h
+    int 21h       ;Input del usuario
 
     sub al, 30h
-    mov ah, 0     ; Limpia AH
+    mov ah, 0     ; Limpia ah para quedarnos solo con el input del usuario
     mov dx, ax
 
-    mov ax, 1000
+    mov ax, 1000  
     mul dx
-    mov bx, ax
+    mov bx, ax      ;Se multiplica por 1000 para guardalo en el registro bx
 
     mov ah, 01h
     int 21h
 
     sub al, 30h
-    mov ah, 0
+    mov ah, 0     ; Limpia ah para quedarnos solo con el input del usuario
     mov dx, ax
 
-    mov ax, 100
+    mov ax, 100   
     mul dx
-    add bx, ax
+    add bx, ax   ; Se multiplica por 100 para guardalo en el registro bx mas el valor previo
 
     mov ah, 01h
     int 21h
 
     sub al, 30h
-    mov ah, 0
+    mov ah, 0     ; Limpia ah para quedarnos solo con el input del usuario
     mov dx, ax
 
-    mov ax, 10
+    mov ax, 10    
     mul dx
-    add bx, ax
+    add bx, ax   ; Se multiplica por 10 para guardalo en el registro bx mas el valor previo
 
     mov ah, 01h
     int 21h
 
-    sub al, 30h
-    mov ah, 0
-    add bx, ax
+    sub al, 30h  
+    mov ah, 0    ; Limpia ah para quedarnos solo con el input del usuario
+    add bx, ax   ; Se agrega el ultimo digito al registro bx
 
     ; Solicitud del segundo n?mero
     lea dx, msg_SegundoNumero
@@ -194,42 +185,42 @@ obtener_numeros proc near
     int 21h
 
     sub al, 30h
-    mov ah, 0     ; Limpia AH
+    mov ah, 0    ; Limpia ah para quedarnos solo con el input del usuario
     mov dx, ax
 
-    mov ax, 1000
+    mov ax, 1000  
     mul dx
-    mov cx, ax
+    mov cx, ax   ; Se multiplica por 1000 para guardalo en el registro cx
 
     mov ah, 01h
     int 21h
 
     sub al, 30h
-    mov ah, 0
+    mov ah, 0    ; Limpia ah para quedarnos solo con el input del usuario
     mov dx, ax
 
-    mov ax, 100
+    mov ax, 100  
     mul dx
-    add cx, ax
+    add cx, ax ; Se multiplica por 100 para guardalo en el registro cx mas el valor previo
 
     mov ah, 01h
     int 21h
 
     sub al, 30h
-    mov ah, 0
+    mov ah, 0   ; Limpia ah para quedarnos solo con el input del usuario
     mov dx, ax
 
-    mov ax, 10
+    mov ax, 10  
     mul dx
-    add cx, ax
+    add cx, ax ; Se multiplica por 10 para guardalo en el registro cx mas el valor previo
 
     mov ah, 01h
     int 21h
 
-    sub al, 30h
-    mov ah, 0
-    add cx, ax
-    
+    sub al, 30h 
+    mov ah, 0   ; Limpia ah para quedarnos solo con el input del usuario
+    add cx, ax  ;Se agrega el ultimo digito al registro cx
+     
     ret
 obtener_numeros endp
 
@@ -237,8 +228,8 @@ obtener_numeros endp
 mostrar_resultados proc near
 
 ; Comprobar si el resultado es negativo
-        test bx, bx            ; Comprueba si BX (el resultado) es negativo
-        jns mostrar_resultado  ; Si no es negativo, saltar a mostrar el resultado
+        test bx, bx            ; Comprueba si bx (el resultado) es negativo
+        jns mostrar_resultado  ; Si no es negativo, se continua a mostrar el resultado
 
         ; Si es negativo, establecer el indicador de negativo y tomar el valor absoluto
         neg bx                 ; Toma el valor absoluto del resultado
